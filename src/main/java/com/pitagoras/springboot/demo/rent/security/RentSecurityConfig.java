@@ -44,6 +44,7 @@ public class RentSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/cars/").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/cars/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/cars/find-car-plate/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/customer").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                 );
 // use HTTP Basic authentication
         http.httpBasic(Customizer.withDefaults());

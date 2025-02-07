@@ -11,17 +11,29 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-incremented primary key
     private Integer id;
 
-    @Column(name = "personal_number", unique = true, nullable = false)
+    @Column(name = "personal_number")
     private String personalNumber;
 
     @Column(name = "phone_number", nullable = true)
     private String phoneNumber;
 
-    @Column(name = "created_at", updatable = false, nullable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     // Getters and setters
     public Integer getId() {
