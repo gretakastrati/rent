@@ -1,9 +1,4 @@
-package com.pitagoras.springboot.demo.rent;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
+package com.pitagoras.springboot.demo.rent.dto;
 
 
 public class CustomerUserRequest {
