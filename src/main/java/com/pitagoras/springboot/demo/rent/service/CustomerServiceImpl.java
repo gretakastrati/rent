@@ -1,13 +1,12 @@
 package com.pitagoras.springboot.demo.rent.service;
 
-import com.pitagoras.springboot.demo.rent.CustomerUserRequest;
-import com.pitagoras.springboot.demo.rent.entity.Car;
 import com.pitagoras.springboot.demo.rent.entity.Customer;
-import com.pitagoras.springboot.demo.rent.entity.User;
 import com.pitagoras.springboot.demo.rent.repository.CustomerRepository;
 import com.pitagoras.springboot.demo.rent.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -35,5 +34,15 @@ public class CustomerServiceImpl implements CustomerService {
         return this.customerRepository.save(customer);
 
     }
+     @Override
+    public Customer findCustomerById(int id) {
+         Optional<Customer> customer = this.customerRepository.findById(id);
+
+         if(!customer.isPresent()) {
+             throw new RuntimeException("Customer not found");
+
+         }
+         return customer.get();
+     }
 }
 

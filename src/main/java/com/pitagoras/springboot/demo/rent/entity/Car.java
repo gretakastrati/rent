@@ -4,6 +4,8 @@ package com.pitagoras.springboot.demo.rent.entity;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "car")
 public class Car {
@@ -34,6 +36,11 @@ public class Car {
     @Column(name = "km_passed")
     private Integer kmPassed;
 
+//    @OneToMany(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "id", referencedColumnName = "id")
+//    private List<Order> orders;
+
+
     public Car() {
     }
 
@@ -51,6 +58,14 @@ public class Car {
     public int getId() {
         return id;
     }
+
+//    public List<Order> getOrders() {
+//        return orders;
+//    }
+//
+//    public void setOrders(List<Order> orders) {
+//        this.orders = orders;
+//    }
 
     public void setId(int id) {
         this.id = id;

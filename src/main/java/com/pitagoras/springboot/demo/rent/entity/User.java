@@ -1,44 +1,43 @@
 package com.pitagoras.springboot.demo.rent.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-
     private int userId;
+
     private String name;
+
     private String email;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
     private String password;
+
     private String username;
-    @Column(name = "enabled")
-    private boolean enable;
 
-    // Constructor to initialize all fields
-    public User(int userId, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.userId = userId;
-        this.name = name;
-        this.email = email;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+    private boolean enabled;
 
-    public User() {
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Customer customer;
 
-    }
+    public User() {}
 
+    // Getters and Setters
     public int getUserId() {
         return userId;
     }
@@ -95,12 +94,20 @@ public class User {
         this.username = username;
     }
 
-    public boolean isEnable() {
-        return enable;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override
@@ -111,10 +118,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", password='" + password + '\'' +
-                ", username='" + username + '\'' +
-                ", enable=" + enable +
+                ", customer=" + (customer != null ? customer.getId() : "null") +
                 '}';
     }
 }
-

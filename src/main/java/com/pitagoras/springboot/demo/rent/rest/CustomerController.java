@@ -1,15 +1,12 @@
 package com.pitagoras.springboot.demo.rent.rest;
 
 
-import com.pitagoras.springboot.demo.rent.CustomerUserRequest;
+import com.pitagoras.springboot.demo.rent.dto.CustomerUserRequest;
 import com.pitagoras.springboot.demo.rent.entity.Customer;
 import com.pitagoras.springboot.demo.rent.entity.User;
 import com.pitagoras.springboot.demo.rent.repository.UserRepository;
 import com.pitagoras.springboot.demo.rent.service.CustomerService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/customer")
@@ -35,4 +32,9 @@ public class CustomerController {
         this.userRepository.save(u);
         return this.customerService.save(c);
     }
+    @GetMapping("/{id}")
+    public Customer getCostumer(@PathVariable int id) {
+        return this.customerService.findCustomerById(id);
+    }
+
 }
