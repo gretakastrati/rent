@@ -46,7 +46,6 @@ public class ContactUsMessageServiceImpl implements ContactUsMessageService {
         responseDto.setMessage(contactUsMessageRequestDto.getMessage());
         responseDto.setCreatedAt(contactUsMessageCreated.getCreatedAt());
 
-        MailjetClient client = new MailjetClient("026b5d3b31d90ae438df911791a26274", "1ecca95d2bb41c4e13f8c7657c665fae");
 
         MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .property(Emailv31.MESSAGES, new JSONArray()
@@ -56,7 +55,7 @@ public class ContactUsMessageServiceImpl implements ContactUsMessageService {
                                         .put("Name", "Your App Name"))
                                 .put("To", new JSONArray()
                                         .put(new JSONObject()
-                                                .put("Email", "artonhasani96@gmail.com") // Your destination email
+                                                .put("Email", "kastratigreta1@gmail.com") // Your destination email
                                                 .put("Name", "Admin")))
                                 .put("Subject", contactUsMessageRequestDto.getSubject())
                                 .put("TextPart", contactUsMessageRequestDto.getMessage())

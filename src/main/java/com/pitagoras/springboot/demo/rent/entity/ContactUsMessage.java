@@ -23,7 +23,7 @@ public class ContactUsMessage {
     private String subject;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String messsage;
+    private String message;
 
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -40,7 +40,7 @@ public class ContactUsMessage {
         this.name = name;
         this.email = email;
         this.subject = subject;
-        this.messsage = messsage;
+        this.message = messsage;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -78,11 +78,11 @@ public class ContactUsMessage {
     }
 
     public String getMesssage() {
-        return messsage;
+        return message;
     }
 
     public void setMesssage(String messsage) {
-        this.messsage = messsage;
+        this.message = messsage;
     }
 
     public LocalDateTime getCreatedAt() {
