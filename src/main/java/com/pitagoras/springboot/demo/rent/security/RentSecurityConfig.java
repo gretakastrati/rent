@@ -36,7 +36,7 @@ public class RentSecurityConfig {
                 configurer
                         .requestMatchers(HttpMethod.GET, "/cars/list").permitAll()
                         .requestMatchers(HttpMethod.GET, "/cars/find-car-plate/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/cars/find/").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/cars/find/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/cars").hasAnyRole("MANAGER","ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/cars/").hasAnyRole("MANAGER","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/customer").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
@@ -44,7 +44,9 @@ public class RentSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                         .requestMatchers(HttpMethod.GET, "/order/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/order").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/contact-us").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/cars/**").hasRole("ADMIN"));
+
 
 
         http.httpBasic(Customizer.withDefaults());
