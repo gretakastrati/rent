@@ -11,6 +11,7 @@ import com.pitagoras.springboot.demo.rent.rest.CarNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,4 +94,9 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findByCustomerId(Integer customerId) {
         return this.orderRepository.findByCustomerId(customerId);
     }
+    public boolean isCarAvailable(int carId, LocalDate startDate, LocalDate endDate) {
+        List<Order> overlappingOrders = orderRepository.findOverlappingOrders(carId, startDate, endDate);
+        return overlappingOrders.isEmpty();
+    }
+
 }

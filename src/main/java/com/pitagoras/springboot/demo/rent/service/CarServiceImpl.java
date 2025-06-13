@@ -1,24 +1,36 @@
 package com.pitagoras.springboot.demo.rent.service;
 
+import com.pitagoras.springboot.demo.rent.dto.CarDto;
 import com.pitagoras.springboot.demo.rent.entity.Car;
+import com.pitagoras.springboot.demo.rent.helper.Mapper;
 import com.pitagoras.springboot.demo.rent.repository.CarRepository;
+import com.pitagoras.springboot.demo.rent.repository.OrderRepository;
 import com.pitagoras.springboot.demo.rent.rest.CarNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarServiceImpl implements CarService {
 
 
     private CarRepository carRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
-    public CarServiceImpl(CarRepository carRepository) {
+    public CarServiceImpl(CarRepository carRepository, OrderRepository orderRepository) {
         this.carRepository = carRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -49,11 +61,84 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Car> findAll(Boolean isAvailable) {
-        if (isAvailable != null) {
-            return carRepository.findByAvailable(isAvailable); // Filtering by availability
+    public Page<Car> findAll(Boolean isAvailable, String make, Pageable pageable) {
+        if (isAvailable != null && make != null) {
+            return carRepository.findByAvailableAndMakeContainingIgnoreCase(isAvailable, make, pageable);
+        } else if (isAvailable != null) {
+            return carRepository.findByAvailable(isAvailable, pageable);
+        } else if (make != null) {
+            return carRepository.findByMakeContainingIgnoreCase(make, pageable);
+        } else {
+            return carRepository.findAll(pageable);
         }
-        return carRepository.findAll(); // No filter, get all cars
+    }
+
+    @Override
+    public Page<Car> findAvailableCars(LocalDateTime pickupDateTime, LocalDateTime returnDateTime,
+                                          Long carId, String pickupLocation, String dropLocation, Pageable pageable) {
+
+        List<Car> cars;
+
+        // 1. Start from all available cars
+        if (carId != null) {
+            Optional<Car> carOpt = carRepository.findById(carId.intValue());
+            cars = carOpt.map(List::of).orElse(List.of());
+        } else {
+            cars = carRepository.findByAvailable(true, Pageable.unpaged()).getContent();
+        }
+
+        System.out.println(cars.size());
+
+        // 2. Remove cars that are booked in the given date range
+        if (pickupDateTime != null && returnDateTime != null) {
+            LocalDate pickupDate = pickupDateTime.toLocalDate();
+            LocalDate returnDate = returnDateTime.toLocalDate();
+
+            List<Integer> unavailableCarIds = orderRepository.findUnavailableCarIds(pickupDate, returnDate);
+
+            cars = cars.stream()
+                    .filter(car -> !unavailableCarIds.contains(car.getId()))
+                    .collect(Collectors.toList());
+        }
+
+        System.out.println(cars.size());
+
+        // 3. Optionally filter by pickupLocation and dropLocation (if passed)
+        if (pickupLocation != null) {
+//            System.out.println(cars.get(0).getOrders());
+//            cars = cars.stream()
+//                    .filter(car -> car.getOrders().stream()
+//                            .noneMatch(order -> order.getPickupLocation().equalsIgnoreCase(pickupLocation)))
+//                    .collect(Collectors.toList());
+        }
+
+        System.out.println(cars.size());
+
+//        if (dropLocation != null) {
+//            cars = cars.stream()
+//                    .filter(car -> car.getOrders().stream()
+//                            .noneMatch(order -> order.getDropLocation().equalsIgnoreCase(dropLocation.toString())))
+//                    .collect(Collectors.toList());
+//        }
+
+
+        System.out.println("after drop location not null");
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), cars.size());
+        List<Car> paginated = cars.subList(start, end);
+
+        return new PageImpl<>(paginated, pageable, cars.size());
+
+//        return cars;
+    }
+
+
+    private boolean carIsAvailable(Car car, LocalDateTime start, LocalDateTime end) {
+        return car.getOrders().stream().noneMatch(order ->
+                order.getRentalStartDate().isBefore(ChronoLocalDate.from(end)) &&
+                        order.getRentalEndDate().isAfter(ChronoLocalDate.from(start))
+        );
     }
 
     @Override

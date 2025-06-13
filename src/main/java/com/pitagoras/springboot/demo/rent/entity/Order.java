@@ -1,5 +1,6 @@
 package com.pitagoras.springboot.demo.rent.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -20,11 +21,6 @@ public class Order {
 
     @Column(name = "customer_id", insertable = false, updatable = false)
     private Integer customerId;
-
-    @ManyToOne
-    @JoinColumn(name = "car_id", nullable = false)
-    private Car car;
-
 
     @Column(name = "car_id", insertable = false, updatable = false)
     private Integer carId;
@@ -47,6 +43,17 @@ public class Order {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "pickup_location", nullable = false)
+    private String pickupLocation;
+
+    @Column(name = "drop_location", nullable = false)
+    private String dropLocation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_id")
+    @JsonBackReference
+    private Car car;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -62,7 +69,7 @@ public class Order {
     }
 
 
-    public Order(Long id, Customer customer, Integer customerId, Car car, Integer carId, LocalDate rentalStartDate, LocalDate rentalEndDate, BigDecimal totalPrice, String status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Order(Long id, Customer customer, Integer customerId, Car car, Integer carId, LocalDate rentalStartDate, LocalDate rentalEndDate, BigDecimal totalPrice, String status, LocalDateTime createdAt, LocalDateTime updatedAt, String pickupLocation, String dropLocation) {
         this.id = id;
         this.customer = customer;
         this.customerId = customerId;
@@ -74,7 +81,10 @@ public class Order {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.pickupLocation = pickupLocation;
+        this.dropLocation = dropLocation;
     }
+
 
     public Integer getCustomerId() {
         return customerId;
@@ -164,6 +174,21 @@ public class Order {
         this.updatedAt = updatedAt;
     }
 
+    public String getPickupLocation() {
+        return pickupLocation;
+    }
+
+    public void setPickupLocation(String pickupLocation) {
+        this.pickupLocation = pickupLocation;
+    }
+
+    public String getDropLocation() {
+        return dropLocation;
+    }
+
+    public void setDropLocation(String dropLocation) {
+        this.dropLocation = dropLocation;
+    }
 
     @Override
     public String toString() {

@@ -1,0 +1,7 @@
+CREATE TABLE car_image (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    image_url VARCHAR(255) NOT NULL,
+    primary_image BOOLEAN DEFAULT FALSE,
+    car_id INT,
+    FOREIGN KEY (car_id) REFERENCES car(id) ON DELETE CASCADE
+);
