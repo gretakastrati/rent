@@ -1,72 +1,33 @@
-package com.pitagoras.springboot.demo.rent.entity;
-
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+package com.pitagoras.springboot.demo.rent.dto;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "car")
-public class Car {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class CarDto {
+
     private int id;
-
-    @Column(name = "make")
     private String make;
-
-    @Column(name = "model")
     private String model;
-
-    @Column(name = "year")
     private int year;
-
-    @Column(name = "color")
     private String color;
-
-
-    @Column(name = "license_plate")
     private String licensePlate;
-
-    @Column(name = "available")
     private boolean available;
-
-    @Column(name = "km_passed")
     private Integer kmPassed;
-
-    @Column(columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "liters_per_km" , precision = 5, scale = 3)
     private BigDecimal litersPerKm;
-
-    @Column(length = 10)
     private String transmission;
-
-    @Column(name = "has_navigation")
     private Boolean hasNavigation;
-
-    @Column(name = "price_per_day", precision = 6, scale = 2)
     private BigDecimal pricePerDay;
-
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<CarImage> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Order> orders = new ArrayList<>();
+    private List<CarImageDto> images;
 
 
-    public Car() {
-    }
+    // Default constructor
+    public CarDto() {}
 
-    public Car(int id, String make, String model, int year, String color, String licensePlate, boolean available, Integer kmPassed, String description, BigDecimal litersPerKm, String transmission, Boolean hasNavigation, BigDecimal pricePerDay, List<CarImage> images, List<Order> orders) {
+    // Constructor with all fields
+    public CarDto(int id, String make, String model, int year, String color, String licensePlate,
+                  boolean available, Integer kmPassed, String description, BigDecimal litersPerKm,
+                  String transmission, Boolean hasNavigation, BigDecimal pricePerDay, List<CarImageDto> images) {
         this.id = id;
         this.make = make;
         this.model = model;
@@ -81,13 +42,12 @@ public class Car {
         this.hasNavigation = hasNavigation;
         this.pricePerDay = pricePerDay;
         this.images = images;
-        this.orders = orders;
     }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
-
 
     public void setId(int id) {
         this.id = id;
@@ -189,35 +149,12 @@ public class Car {
         this.pricePerDay = pricePerDay;
     }
 
-    public List<CarImage> getImages() {
+    public List<CarImageDto> getImages() {
         return images;
     }
 
-
-
-    public void setImages(List<CarImage> images) {
+    public void setImages(List<CarImageDto> images) {
         this.images = images;
     }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    @Override
-    public String toString() {
-        return "Car{" +
-                "id=" + id +
-                ", make='" + make + '\'' +
-                ", model='" + model + '\'' +
-                ", year=" + year +
-                ", color='" + color + '\'' +
-                ", licensePlate='" + licensePlate + '\'' +
-                ", available=" + available +
-                ", kmPassed=" + kmPassed +
-                '}';
-    }
 }
+
