@@ -1,5 +1,6 @@
 package com.pitagoras.springboot.demo.rent.service;
 
+import com.pitagoras.springboot.demo.rent.dto.BookingRequestDto;
 import com.pitagoras.springboot.demo.rent.entity.Car;
 import com.pitagoras.springboot.demo.rent.entity.Order;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    Order save(Order order );
+    Order save(BookingRequestDto dto );
 
     Order findById(Long id );
 

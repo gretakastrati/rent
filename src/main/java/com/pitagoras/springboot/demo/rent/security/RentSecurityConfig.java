@@ -36,6 +36,7 @@ public class RentSecurityConfig {
                 configurer
                         .requestMatchers(HttpMethod.GET, "/cars/list").permitAll()
                         .requestMatchers(HttpMethod.GET, "/cars/search-available").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/cars/check-availability").permitAll()
                         .requestMatchers(HttpMethod.GET, "/cars/find-car-plate/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                         .requestMatchers(HttpMethod.GET, "/cars/find/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/cars").hasAnyRole("MANAGER","ADMIN")
@@ -48,6 +49,8 @@ public class RentSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/contact-us").permitAll()
                         .requestMatchers(HttpMethod.GET, "/contact-us").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/contact-us").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/order/book").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/order/book").permitAll()
                         .requestMatchers(HttpMethod.GET, "/customer").permitAll()
 //                        .requestMatchers(HttpMethod.OPTIONS, "/cars/search-available").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/cars/**").hasRole("ADMIN"));

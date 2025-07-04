@@ -68,10 +68,14 @@ public class CarController {
     }
 
     @GetMapping("/find/{carId}")
-    public Car findById(@PathVariable int carId) {
+    public ResponseEntity<CarDto    > findById(@PathVariable int carId) {
        Car vetura = this.carService.findById(carId);
+       if(vetura != null) {
+           CarDto carDto = Mapper.convertToDto(vetura);
+           return ResponseEntity.ok(carDto);
+       }
 
-        return vetura;
+        return null;
     }
 
     @PutMapping("/{id}")
@@ -95,10 +99,21 @@ public class CarController {
 
     }
     @GetMapping("/check-availability")
-    public ResponseEntity<Boolean> checkAvailability(@RequestParam int carId,
-                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        boolean isAvailable = orderService.isCarAvailable(carId, startDate, endDate);
+    public ResponseEntity<Boolean> checkAvailability(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime pickupDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime returnDate,
+            @RequestParam Long carId,
+            @RequestParam(required = false) String pickupLocation,
+            @RequestParam(required = false) String dropLocation
+            ) {
+
+        boolean isAvailable = carService.isCarAvailable(
+                carId,
+                pickupDate.toLocalDate(),
+                returnDate.toLocalDate(),
+                pickupLocation,
+                dropLocation
+        );
         return ResponseEntity.ok(isAvailable);
     }
 
