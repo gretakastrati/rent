@@ -2,6 +2,7 @@ package com.pitagoras.springboot.demo.rent.service;
 
 import com.pitagoras.springboot.demo.rent.dto.CarDto;
 import com.pitagoras.springboot.demo.rent.entity.Car;
+import com.pitagoras.springboot.demo.rent.entity.Order;
 import com.pitagoras.springboot.demo.rent.helper.Mapper;
 import com.pitagoras.springboot.demo.rent.repository.CarRepository;
 import com.pitagoras.springboot.demo.rent.repository.OrderRepository;
@@ -75,7 +76,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Page<Car> findAvailableCars(LocalDateTime pickupDateTime, LocalDateTime returnDateTime,
-                                          Long carId, String pickupLocation, String dropLocation, Pageable pageable) {
+                                       Long carId, String pickupLocation, String dropLocation, Pageable pageable) {
 
         List<Car> cars;
 
@@ -157,6 +158,29 @@ public class CarServiceImpl implements CarService {
             throw new CarNotFoundException("Car with id " + id + " was not found");
         }
         this.carRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public boolean isCarAvailable(Long carId, LocalDate pickupDate, LocalDate returnDate, String pickupLocation, String dropLocation) {
+        // Kërko rezervimet për atë veturë brenda periudhës së kërkuar
+        System.out.println("para se me thirr order Repositury");
+        List<Order> overlappingOrders = orderRepository.findOverlappingOrders(carId.intValue(), pickupDate, returnDate);
+
+        if (!overlappingOrders.isEmpty()) {
+            return false;
+        }
+
+        System.out.println("mas order repositoru");
+
+        // (Opsional) mund të kontrollosh nëse vetura ekziston dhe i përket lokacionit të duhur
+        Car car = carRepository.findById(carId.intValue()).orElse(null);
+        System.out.println("mas carid");
+        if (car == null) return false;
+
+        //if (pickupLocation != null && !pickupLocation.equalsIgnoreCase(car.getPickupLocation())) return false;
+        //if (dropLocation != null && !dropLocation.equalsIgnoreCase(car.getDropLocation())) return false;
+
         return true;
     }
 }

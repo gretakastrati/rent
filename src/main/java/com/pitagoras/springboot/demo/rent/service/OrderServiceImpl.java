@@ -1,5 +1,6 @@
 package com.pitagoras.springboot.demo.rent.service;
 
+import com.pitagoras.springboot.demo.rent.dto.BookingRequestDto;
 import com.pitagoras.springboot.demo.rent.entity.Car;
 import com.pitagoras.springboot.demo.rent.entity.Customer;
 import com.pitagoras.springboot.demo.rent.entity.Order;
@@ -7,11 +8,15 @@ import com.pitagoras.springboot.demo.rent.entity.User;
 import com.pitagoras.springboot.demo.rent.repository.CarRepository;
 import com.pitagoras.springboot.demo.rent.repository.CustomerRepository;
 import com.pitagoras.springboot.demo.rent.repository.OrderRepository;
+import com.pitagoras.springboot.demo.rent.repository.UserRepository;
 import com.pitagoras.springboot.demo.rent.rest.CarNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,38 +26,64 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final CarRepository carRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, CustomerRepository customerRepository, CarRepository carRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, CustomerRepository customerRepository, CarRepository carRepository, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.carRepository = carRepository;
+        this.userRepository = userRepository;
     }
 
-    @Override
-    public Order save(Order order) {
-        Order o = new Order();
-        o.setRentalStartDate(order.getRentalStartDate());
-        o.setRentalEndDate(order.getRentalEndDate());
-        o.setTotalPrice(order.getTotalPrice());
-        o.setStatus(order.getStatus());
+    @Transactional
+    public Order save(BookingRequestDto dto) {
 
-        Optional<Customer> c = this.customerRepository.findById(order.getCustomerId());
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setName(dto.getFirstName() + " " + dto.getLastName());
+                    newUser.setEmail(dto.getEmail());
+                    newUser.setUsername(dto.getEmail());
+                    newUser.setPassword("default");
+                    newUser.setEnabled(true);
+                    newUser.setCreatedAt(LocalDateTime.now());
+                    newUser.setUpdatedAt(LocalDateTime.now());
+                    return userRepository.save(newUser);
 
-        if (!c.isPresent()) {
-            throw new CarNotFoundException("Customer with id " + order.getCustomerId() + " not found.");
-        }
-        o.setCustomer(c.get());
 
-        Optional<Car> ca = this.carRepository.findById(order.getCarId());
+                });
 
-        if (!ca.isPresent()) {
-            throw new CarNotFoundException("Car with id " + order.getCarId() + " not found.");
-        }
+        Customer customer = customerRepository.findByUser(user)
+                .orElseGet(() -> {
+                    Customer newCustomer = new Customer();
+                    newCustomer.setUser(user);
+                    newCustomer.setPhoneNumber(dto.getPhoneNumber());
+                    newCustomer.setCreatedAt(LocalDateTime.now());
+                    newCustomer.setUpdatedAt(LocalDateTime.now());
+                    return customerRepository.save(newCustomer);
 
-        o.setCar(ca.get());
-        return this.orderRepository.save(o);
+                });
+
+        Car car = carRepository.findById((long) dto.getCarId())
+                .orElseThrow(() -> new RuntimeException("Car not found with id " + dto.getCarId()));
+
+        Order order = new Order();
+        order.setCustomer(customer);
+        order.setCar(car);
+        order.setRentalStartDate(dto.getRentalStartDate());
+        order.setRentalEndDate(dto.getRentalEndDate());
+        order.setPickupLocation(dto.getPickupLocation());
+        order.setDropLocation(dto.getDropLocation());
+        order.setTotalPrice(BigDecimal.valueOf(dto.getTotalPrice()));
+        order.setStatus("PENDING");
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+
+        return orderRepository.save(order);
+
     }
+
 
     @Override
     public Order findById(Long id) {

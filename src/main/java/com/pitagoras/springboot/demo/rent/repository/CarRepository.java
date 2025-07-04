@@ -20,4 +20,6 @@ public interface CarRepository extends JpaRepository<Car,Integer> {
 
     Page<Car> findByAvailableAndMakeContainingIgnoreCase(Boolean available, String make, Pageable pageable);
 
+    Optional<Car> findById(Long id);
+
 }

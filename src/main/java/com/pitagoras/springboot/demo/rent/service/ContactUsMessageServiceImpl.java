@@ -29,7 +29,7 @@ public class ContactUsMessageServiceImpl implements ContactUsMessageService {
     public ContactUsMessageServiceImpl(ContactUsMessageRepository contactUsMessageRepository) {
 
         this.contactUsMessageRepository = contactUsMessageRepository;
-        this.client = new MailjetClient("28d5979c5ca7674933156b712971ac8c", "c3193fc9ccdc2a498b604605e1c114ae");
+//        this.client = new MailjetClient("28d5979c5ca7674933156b712971ac8c", "c3193fc9ccdc2a498b604605e1c114ae");
     }
 
     @Override
@@ -49,30 +49,32 @@ public class ContactUsMessageServiceImpl implements ContactUsMessageService {
         responseDto.setMessage(contactUsMessageRequestDto.getMessage());
         responseDto.setCreatedAt(contactUsMessageCreated.getCreatedAt());
 
+        MailjetClient client1 = new MailjetClient("28d5979c5ca7674933156b712971ac8c", "c3193fc9ccdc2a498b604605e1c114ae");
 
 
 
-        MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                .property(Emailv31.MESSAGES, new JSONArray()
-                        .put(new JSONObject()
-                                .put("From", new JSONObject()
-                                        .put("Email", "kastratigreta1@gmail.com")
-                                        .put("Name", "Greta Rent"))
-                                .put("To", new JSONArray()
-                                        .put(new JSONObject()
-                                                .put("Email", contactUsMessageRequestDto.getEmail()) // Your destination email
-                                                .put("Name", contactUsMessageRequestDto.getName())))
-                                .put("Subject", contactUsMessageRequestDto.getSubject())
-                                .put("TextPart", contactUsMessageRequestDto.getMessage())
-                                .put("HTMLPart", String.format("<h4>New Contact Message</h4><p><b>Name:</b> %s<br><b>Email:</b> %s<br><b>Message:</b><br>%s</p>", contactUsMessageRequestDto.getName(), contactUsMessageRequestDto.getEmail(), contactUsMessageRequestDto.getMessage()))
-                        ));
-
-        try{
-            MailjetResponse response = client.post(request);
-
-        } catch (MailjetException e) {
-            System.out.println(e.getMessage());
-        }
+//
+//        MailjetRequest request = new MailjetRequest(Emailv31.resource)
+//                .property(Emailv31.MESSAGES, new JSONArray()
+//                        .put(new JSONObject()
+//                                .put("From", new JSONObject()
+//                                        .put("Email", "kastratigreta1@gmail.com")
+//                                        .put("Name", "Greta Rent"))
+//                                .put("To", new JSONArray()
+//                                        .put(new JSONObject()
+//                                                .put("Email", contactUsMessageRequestDto.getEmail()) // Your destination email
+//                                                .put("Name", contactUsMessageRequestDto.getName())))
+//                                .put("Subject", contactUsMessageRequestDto.getSubject())
+//                                .put("TextPart", contactUsMessageRequestDto.getMessage())
+//                                .put("HTMLPart", String.format("<h4>New Contact Message</h4><p><b>Name:</b> %s<br><b>Email:</b> %s<br><b>Message:</b><br>%s</p>", contactUsMessageRequestDto.getName(), contactUsMessageRequestDto.getEmail(), contactUsMessageRequestDto.getMessage()))
+//                        ));
+//
+//        try{
+//            MailjetResponse response = client.post(request);
+//
+//        } catch (MailjetException e) {
+//            System.out.println(e.getMessage());
+//        }
 
 
 

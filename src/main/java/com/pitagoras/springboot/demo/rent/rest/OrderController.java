@@ -2,10 +2,12 @@ package com.pitagoras.springboot.demo.rent.rest;
 
 
 
+import com.pitagoras.springboot.demo.rent.dto.BookingRequestDto;
 import com.pitagoras.springboot.demo.rent.entity.Order;
 import com.pitagoras.springboot.demo.rent.repository.OrderRepository;
 import com.pitagoras.springboot.demo.rent.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +23,15 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping
-    public Order createOrder(@RequestBody Order order){
-        System.out.println(order);
-        return this.orderService.save(order);
+//    @PostMapping
+//    public Order createOrder(@RequestBody Order order){
+//        System.out.println(order);
+//        return this.orderService.save(order);
+
+    @PostMapping("/book")
+    public ResponseEntity<?> bookCar(@RequestBody BookingRequestDto dto) {
+        Order order = orderService.save(dto);
+        return ResponseEntity.ok("Order placed successfully with ID: " + order.getId());
     }
     @GetMapping("/{orderId}")
     public Order findById(@PathVariable long orderId){
